@@ -27,17 +27,22 @@ Large raw or processed single-cell objects are not stored directly in this repos
 
 ## Repository structure
 
+## Repository Structure
+
 ```text
 .
-├── README.md
-└── 01_preprocessing_and_annotation_review.R
-    02_scenic_reference_regulon_summaries.R
-    03_developmental_reference_construction.R
-    04_disease_cell_projection.R
-    05_sertoli_molecular_characterization.R
-    06_sertoli_evidence_synthesis.R
+|-- .gitignore
+|-- LICENSE
+|-- README.md
+|-- 01_preprocessing_and_annotation_review.R
+|-- 02_scenic_reference_regulon_summaries.R
+|-- 03_developmental_reference_construction.R
+|-- 04_disease_cell_projection.R
+|-- 05_sertoli_molecular_characterization.R
+`-- 06_sertoli_evidence_synthesis.R
 ```
 
+## Workflow Order
 ## Analysis workflow
 
 The main workflow is organized into six R scripts.
