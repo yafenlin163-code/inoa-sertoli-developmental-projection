@@ -1,58 +1,205 @@
 # inoa-sertoli-developmental-projection
 
-Code and source data for developmental-reference projection analysis identifying an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia.
+Code and reproducibility materials for developmental-reference projection analysis identifying an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia.
 
 ## Overview
 
-This repository contains analysis scripts and reproducibility materials for a single-cell transcriptomic reanalysis of public human testicular datasets. The study constructs normal postnatal developmental references across major human testicular cell types and projects disease-derived cells from idiopathic non-obstructive azoospermia onto these reference axes.
+This repository contains the main analysis scripts for the manuscript:
 
-The main biological focus is the Sertoli-cell maturation continuum. The analysis evaluates whether Sertoli cells from idiopathic non-obstructive azoospermia occupy earlier positions along a normal postnatal Sertoli-cell developmental reference and whether these projected states are associated with stress-response, senescence-associated, support-related and regulatory-activity programs.
+**Developmental-reference projection reveals an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia**
 
-This repository is intended to support peer review and reproducibility of the manuscript.
+The study re-analyses public human testicular single-cell RNA sequencing datasets to construct normal postnatal developmental references across major testicular cell types. Disease-derived cells from idiopathic non-obstructive azoospermia and azoospermia factor a deletion samples are then projected onto these normal reference axes.
 
-## Manuscript
+The main biological focus is the Sertoli-cell maturation continuum. The analysis tests whether disease-derived Sertoli cells in idiopathic non-obstructive azoospermia map toward earlier positions along a normal postnatal Sertoli-cell developmental reference and whether these projected states are associated with stress-response, senescence-associated, support-related and regulatory-activity programs.
 
-Developmental-reference projection reveals an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia
+Reference-based projection and transcriptional association do not establish causal developmental arrest. The analyses in this repository support a developmental-reference model and nominate molecular programs for future validation.
 
 ## Public datasets
 
-The analysis reuses public human testicular single-cell RNA sequencing datasets from the Gene Expression Omnibus:
+The analysis uses public human testicular single-cell RNA sequencing datasets from the Gene Expression Omnibus:
 
 - GSE149512
 - GSE182786
 
 No new raw sequencing data were generated in this study.
 
+Large raw or processed single-cell objects are not stored directly in this repository. The scripts expect processed Seurat objects and precomputed SCENIC/regulon outputs as described below.
+
 ## Repository structure
 
 ```text
 .
 ├── README.md
-├── code/
-│   ├── 01_preprocessing_and_annotation.R
-│   ├── 02_scenic_reference_regulons.R
-│   ├── 03_developmental_reference_construction.R
-│   ├── 04_disease_cell_projection.R
-│   ├── 05_sertoli_molecular_characterization.R
-│   └── 06_integrated_sertoli_evidence.R
-├── data_access/
-│   └── public_dataset_sources.md
-├── metadata/
-│   ├── sample_metadata.csv
-│   ├── cell_type_markers.csv
-│   └── gene_sets.csv
-├── results/
-│   ├── developmental_reference_summaries/
-│   ├── disease_projection_summaries/
-│   ├── sertoli_gene_set_scores/
-│   ├── differential_expression/
-│   └── regulon_activity/
-├── figure_source_data/
-│   ├── Figure1/
-│   ├── Figure2/
-│   └── Figure3/
-└── reproducibility/
-    ├── session_info_R.txt
-    ├── session_info_python.txt
-    └── package_versions.csv
+└── code/
+    ├── 01_preprocessing_and_annotation_review.R
+    ├── 02_scenic_reference_regulon_summaries.R
+    ├── 03_developmental_reference_construction.R
+    ├── 04_disease_cell_projection.R
+    ├── 05_sertoli_molecular_characterization.R
+    └── 06_sertoli_evidence_synthesis.R
+```
 
+## Analysis workflow
+
+The main workflow is organized into six R scripts.
+
+### 01_preprocessing_and_annotation_review.R
+
+Reviews quality-control metrics and major testicular cell-type annotations in public processed human testicular single-cell objects. This script starts from processed or annotated Seurat objects. It does not perform FASTQ alignment, raw count generation or full de novo preprocessing.
+
+Main outputs include marker-validation plots, annotated t-SNE visualizations, cell-type composition summaries and quality-control overview figures.
+
+### 02_scenic_reference_regulon_summaries.R
+
+Summarizes completed SCENIC/regulon outputs for normal postnatal testicular cell-type references and generates manuscript source tables and figures.
+
+This script reads precomputed SCENIC outputs and does not run pySCENIC or SCENIC regulon inference from expression matrices. The regulon results are used as supportive regulatory-activity evidence, not as causal proof of Sertoli-cell developmental arrest.
+
+### 03_developmental_reference_construction.R
+
+Constructs normal postnatal developmental references for Sertoli and other major human testicular cell types using PAGA/DPT pseudotime, age ordering, marker-based maturation refinement and trajectory-quality summaries.
+
+Disease cells are not used to define these reference trajectories. They are projected onto the normal references in the next step.
+
+Key implemented parameters include:
+
+- 30 principal components for trajectory construction
+- 15 neighbours for the PAGA/DPT graph
+- Leiden resolution of 0.5
+- 15 diffusion components
+- final pseudotime defined from age-ordered pseudotime and marker-based maturation refinement
+
+### 04_disease_cell_projection.R
+
+Projects disease-derived cells from idiopathic non-obstructive azoospermia and azoospermia factor a deletion samples onto normal cell-type-specific developmental references generated by `03_developmental_reference_construction.R`.
+
+Disease cells are mapped onto normal references rather than used to reconstruct independent disease trajectories. The analysis generates cell-level projected pseudotime values, sample-level summaries, group-level summaries, projection-quality tables and projection figures.
+
+Key implemented parameters include:
+
+- up to 2,500 projection features
+- 30 nearest normal reference neighbours
+- projection-quality threshold based on the 95th percentile of reference self-distance
+- moderate-quality boundary defined as 1.25 times the high-quality distance threshold
+
+### 05_sertoli_molecular_characterization.R
+
+Focuses on projected Sertoli cells and characterizes molecular programs associated with projected Sertoli-cell states. The analysis includes stress-response, senescence-associated, metabolic and Sertoli support-related programs, differential-expression analysis, functional enrichment and sample-level summaries.
+
+This script starts from Part 4 projection outputs and does not rerun pseudotime projection. The analysis is framed as molecular characterization and supportive evidence rather than as an independent validation experiment.
+
+Key implemented thresholds include:
+
+- low-pseudotime group: lower tertile of projected pseudotime
+- high-pseudotime group: upper tertile of projected pseudotime
+- minimum expression fraction for differential expression: 0.05
+- log2 fold-change cutoff: 0.25
+- false-discovery-rate cutoff: 0.05
+- sample-supported genes required to show directional consistency in at least two-thirds of informative idiopathic non-obstructive azoospermia samples
+
+### 06_sertoli_evidence_synthesis.R
+
+Integrates the normal Sertoli developmental reference, disease-projection summaries and Sertoli molecular-characterization outputs into a focused evidence chain for an immature-like, stress-biased Sertoli-cell phenotype in idiopathic non-obstructive azoospermia.
+
+This script generates evidence-synthesis tables, figure manifests, summary reports and manuscript-oriented interpretation notes. The synthesis supports a developmental-reference association model and does not establish causal developmental arrest.
+
+## Reproducibility and interpretation notes
+
+The donor or sample, rather than the individual cell, is treated as the biological replicate for disease-level interpretation wherever possible.
+
+Cell-level analyses are used for visualization, screening and within-sample summaries. Sample-level medians, sample-level directional consistency and sample-level projection summaries are prioritized for biological interpretation.
+
+Bootstrap confidence intervals based on cell-level resampling are interpreted as supportive summaries of cell-level distributions and do not replace biological replication.
+
+The azoospermia factor a deletion sample is retained as an exploratory comparator because it is represented by one sample.
+
+Regulatory-activity analysis is interpreted as supportive evidence of disease-associated transcriptional remodelling. It is not used as standalone causal evidence.
+
+## Expected inputs
+
+The scripts expect processed objects and intermediate outputs generated from the public datasets.
+
+Typical expected inputs include:
+
+- processed and annotated normal Seurat objects
+- optional raw and quality-controlled Seurat objects for quality-control plots
+- completed SCENIC/regulon output folders for major testicular cell types
+- normal cell-type-specific Seurat objects for developmental-reference construction
+- disease Seurat objects for idiopathic non-obstructive azoospermia and azoospermia factor a deletion samples
+
+Large `.rds` files are not included in this repository.
+
+## Running the workflow
+
+Run scripts in numerical order from the project root:
+
+```r
+source("code/01_preprocessing_and_annotation_review.R")
+source("code/02_scenic_reference_regulon_summaries.R")
+source("code/03_developmental_reference_construction.R")
+source("code/04_disease_cell_projection.R")
+source("code/05_sertoli_molecular_characterization.R")
+source("code/06_sertoli_evidence_synthesis.R")
+```
+
+Several scripts allow paths to be overridden using environment variables. Common variables include:
+
+- `PROJECT_DIR`
+- `OUTPUT_DIR`
+- `NORMAL_CELLTYPE_RDS_DIR`
+- `SCENIC_RESULTS_DIR`
+- `PART4_DISEASE_RDS`
+- `PART4_iNOA_RDS`
+- `PART4_AZFA_RDS`
+- `RETICULATE_PYTHON`
+- `PART3_CONDA_ENV`
+
+For example:
+
+```r
+Sys.setenv(PROJECT_DIR = "/path/to/project")
+Sys.setenv(RETICULATE_PYTHON = "/path/to/python/with/scanpy")
+source("code/03_developmental_reference_construction.R")
+```
+
+## Software
+
+Analyses were performed primarily in R, with Python-based trajectory inference performed through Scanpy via `reticulate`.
+
+Key software and packages include:
+
+- R
+- Seurat
+- SeuratObject
+- Matrix
+- data.table
+- dplyr
+- tidyr
+- ggplot2
+- patchwork
+- reticulate
+- Scanpy
+- AUCell
+- clusterProfiler
+- org.Hs.eg.db
+- SCENIC or pySCENIC-related outputs
+
+The manuscript methods report analyses using R (version 4.5.0). Package and Python environment versions should be recorded with the final reproducibility materials submitted with the manuscript.
+
+## Data availability
+
+Raw public single-cell RNA sequencing datasets are available from the Gene Expression Omnibus under accession numbers GSE149512 and GSE182786.
+
+Processed analysis outputs generated in this study include normal reference pseudotime values, disease-cell projection summaries, Sertoli gene-set score tables, sample-supported differential-expression tables, regulon activity summaries and figure source tables.
+
+No new raw sequencing data were generated in this study.
+
+## Citation
+
+If you use this repository, please cite the associated manuscript:
+
+Developmental-reference projection reveals an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia.
+
+## Contact
+
+For questions about this repository, please contact the corresponding author listed in the manuscript.
