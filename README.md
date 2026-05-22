@@ -200,6 +200,10 @@ If you use this repository, please cite the associated manuscript:
 
 Developmental-reference projection reveals an immature-like, stress-biased Sertoli-cell state in idiopathic non-obstructive azoospermia.
 
+## License
+
+The code in this repository is released under the MIT License. Public datasets, third-party software and external resources remain subject to their original access terms and licenses.
+
 ## Contact
 
 For questions about this repository, please contact the corresponding author listed in the manuscript.
