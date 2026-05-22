@@ -25,8 +25,6 @@ No new raw sequencing data were generated in this study.
 
 Large raw or processed single-cell objects are not stored directly in this repository. The scripts expect processed Seurat objects and precomputed SCENIC/regulon outputs as described below.
 
-## Repository structure
-
 ## Repository Structure
 
 ```text
@@ -42,7 +40,6 @@ Large raw or processed single-cell objects are not stored directly in this repos
 `-- 06_sertoli_evidence_synthesis.R
 ```
 
-## Workflow Order
 ## Analysis workflow
 
 The main workflow is organized into six R scripts.
