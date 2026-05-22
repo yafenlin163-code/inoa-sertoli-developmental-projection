@@ -30,13 +30,12 @@ Large raw or processed single-cell objects are not stored directly in this repos
 ```text
 .
 ├── README.md
-└── code/
-    ├── 01_preprocessing_and_annotation_review.R
-    ├── 02_scenic_reference_regulon_summaries.R
-    ├── 03_developmental_reference_construction.R
-    ├── 04_disease_cell_projection.R
-    ├── 05_sertoli_molecular_characterization.R
-    └── 06_sertoli_evidence_synthesis.R
+└── 01_preprocessing_and_annotation_review.R
+    02_scenic_reference_regulon_summaries.R
+    03_developmental_reference_construction.R
+    04_disease_cell_projection.R
+    05_sertoli_molecular_characterization.R
+    06_sertoli_evidence_synthesis.R
 ```
 
 ## Analysis workflow
@@ -159,7 +158,7 @@ For example:
 ```r
 Sys.setenv(PROJECT_DIR = "/path/to/project")
 Sys.setenv(RETICULATE_PYTHON = "/path/to/python/with/scanpy")
-source("code/03_developmental_reference_construction.R")
+source("03_developmental_reference_construction.R")
 ```
 
 ## Software
