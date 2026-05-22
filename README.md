@@ -134,12 +134,12 @@ Large `.rds` files are not included in this repository.
 Run scripts in numerical order from the project root:
 
 ```r
-source("code/01_preprocessing_and_annotation_review.R")
-source("code/02_scenic_reference_regulon_summaries.R")
-source("code/03_developmental_reference_construction.R")
-source("code/04_disease_cell_projection.R")
-source("code/05_sertoli_molecular_characterization.R")
-source("code/06_sertoli_evidence_synthesis.R")
+source("01_preprocessing_and_annotation_review.R")
+source("02_scenic_reference_regulon_summaries.R")
+source("03_developmental_reference_construction.R")
+source("04_disease_cell_projection.R")
+source("05_sertoli_molecular_characterization.R")
+source("06_sertoli_evidence_synthesis.R")
 ```
 
 Several scripts allow paths to be overridden using environment variables. Common variables include:
